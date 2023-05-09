@@ -16,6 +16,7 @@ To learn how to install Python Pillow see https://pillow.readthedocs.io/en/stabl
 
 If you are using Visual studio code for your IDE, you can also add this user defined code snippet to help structure the stub functions correctly.
 For help learning to create a user defined code snippet, see https://code.visualstudio.com/docs/editor/userdefinedsnippets#_create-your-own-snippets
+```
   {
   "stub function": {
       "prefix": "stub",
@@ -33,6 +34,7 @@ For help learning to create a user defined code snippet, see https://code.visual
       "description": "drafts a python stub function"
       }
     }
+```
 # Useful Websites
   While writting this module I used the follwoing resources:
   - [w3schools](https://www.w3schools.com/python/)
