@@ -1,4 +1,4 @@
-from math import sin, cos, atan, pi, degrees
+from math import sin, cos, atan, pi, degrees, radians
 import PIL
 from PIL import Image as IMG
 from PIL.Image import Image
@@ -117,10 +117,10 @@ class DataFlowArrow:
             x = self._end_point.get_x()
             y = self._end_point.get_y() - value
         elif dy == 0:
-            x = self._end_point.get_x() - value
+            x = self._end_point.get_x() + value
             y = self._end_point.get_y()
         else:
-            slope      = dy/dx if dx != 0 else 0
+            slope      = dy/dx
             pos_dx     = (dx > 0 and value > 0) or (dx < 0 and value < 0)
             pos_dy     = (dy > 0 and value > 0) or (dy < 0 and value < 0)
             x = abs(sqrt(value**2/(1+slope**2))) * (1 if pos_dx else -1)
@@ -230,13 +230,16 @@ class DataFlowArrow:
         #    LENGTH for the height of the triangle of the arrow,
         #    *2 because the arrow should be drawn at the very center of the 
         #       image to ensure it is rotated correctly.
-        img_heigh    = int((num_lines) * (TEXT_SIZE + border_mult*WIDTH) + LENGTH) * 2
-        img_len      = int(self.get_magnitude()+2)
-        # First we draw the arrow from left to right with the text on top in a new image
-        arw_img      = IMG.new("L", (img_len, img_heigh))
+        text_height  = (num_lines) * (TEXT_SIZE + border_mult*WIDTH) + LENGTH
+        img_heigh    = int(text_height + LENGTH) * 2
+        img_len      = int(self.get_magnitude())
+        # First we draw the arrow from left to right with the text on top in a new image.
+        img_size     = img_len if img_len > img_heigh else img_heigh
+        arw_img      = IMG.new("L", (img_size, img_size), 0)
         arw_draw     = Draw(arw_img)
-        arw_height   = int((num_lines) * (TEXT_SIZE + border_mult*WIDTH)) + LENGTH
-        
+        arw_height   = img_size//2
+        line_start   = 0 if img_len > img_heigh else (img_heigh - self.get_magnitude())//2
+        line_end     = int(line_start + self.get_magnitude()-LENGTH)
         # text_width used to determine if the paste are needs to be 
         # moved to accomodate the text height. See lns 247 and 294
         text_width   = 0
@@ -244,8 +247,15 @@ class DataFlowArrow:
             text_width = int(FONT.getsize(self._lable)[0])+1
         else:
             text_width = int(FONT.getsize_multiline(self._lable)[0])+1
-        text_start   = (line_end//2) - (text_width//2)
+        
         angle        = self.get_angle()
+        text_start_width  = (img_size//2) - (text_width//2)
+        if angle < (3/2*pi) and angle > (1/2*pi):
+           text_start_height =  (img_size//2) - text_height
+        else:
+            text_start_height =  (img_size//2) + WIDTH + LENGTH
+        
+        
         # top_crop is the point along the top edge at which arw_img will be 
         # cropped because of the rotation of the image.
         top_crop     = 0
@@ -256,120 +266,115 @@ class DataFlowArrow:
             top_crop = line_end
         # pointer is the three points that make up the triangle at the end of 
         # the arrow.
-        pointer      = ((line_end, arw_height+LENGTH), 
+        pointer1      = (
+                        (line_end, arw_height+LENGTH), 
                         (line_end, arw_height-LENGTH), 
                         (line_end+LENGTH, arw_height)
                        )
-        # color_img is not used until later, however, it needs to be 
-        # initialized at this at this point because of how we draw 
-        # the text when text_only is true.
-        color_img      = colorize(arw_img, color, bg_color)
-        txt_img  = IMG.new("L", arw_img.size, 255)
-        txt_mask = IMG.new("L", arw_img.size)
+        pointer2      = (
+                        (line_end-2*LENGTH, arw_height+LENGTH), 
+                        (line_end-2*LENGTH, arw_height-LENGTH), 
+                        (line_end-LENGTH, arw_height)
+                        )
+        
+        txt_img   = IMG.new("L", (img_size, img_size), 255)
+        txt_mask  = IMG.new("L", (img_size, img_size))
+        
         # Draw the arrow unless text_only is true
         if not text_only: 
-            arw_draw.polygon(pointer, 255)
-            arw_draw.line((LENGTH, arw_height, line_end, arw_height), 255, WIDTH)
-            color_img  = colorize(arw_img, color, bg_color)
-        else: 
-            # Only draw on color_img if txt_only is true. we need the arrow 
-            # when we decide the bounding box, but we do not need it 
-            # thereafter.
-            color_draw = Draw(color_img)
-            color_draw.polygon(pointer, 255)
-            color_draw.line((LENGTH, arw_height, line_end, arw_height), 255, WIDTH)
-        
+            arw_draw.polygon(pointer1, 255)
+            arw_draw.polygon(pointer2, 255)
+            arw_draw.line((line_start, arw_height, line_end, arw_height), 255, WIDTH)
+
         if not arw_only:  
-            Draw(txt_img).multiline_text((text_start, 0), self._lable, 0, FONT, align='center', stroke_width=WIDTH*2, stroke_fill=255)
-            Draw(txt_mask).multiline_text((text_start, 0), self._lable, 255, FONT, align='center', stroke_width=WIDTH*2, stroke_fill=223)
+            Draw(txt_img).multiline_text((text_start_width, text_start_height), self._lable, 0, FONT, align='center', stroke_width=WIDTH*2, stroke_fill=255)
+            Draw(txt_mask).multiline_text((text_start_width, text_start_height), self._lable, 255, FONT, align='center', stroke_width=WIDTH*2, stroke_fill=200)
         
         # Rotate the arw_img
-        arw_img        = arw_img.rotate(degrees(angle), expand=True)
-        color_img      = color_img.rotate(degrees(angle), expand=True)
-        txt_img        = txt_img.rotate(degrees(angle), expand=True)
-        txt_mask       = txt_mask.rotate(degrees(angle), expand=True)
+        arw_img        = arw_img.rotate(degrees(angle))
         
-        # Paste text only if we are allowed to draw the text.
-        if not arw_only: color_img.paste(txt_img, mask=txt_mask)
-        bounding_box   = color_img.getbbox()
-        arw_img        = arw_img.crop(bounding_box)
-        txt_img        = txt_img.crop(bounding_box)
-        txt_mask       = txt_mask.crop(bounding_box)
-        color_img      = colorize(arw_img, bg_color, color)
-        start          = self._start_point.to_list()
-        end            = self._end_point.to_list()
+        if angle < (3/2*pi) and angle > (1/2*pi):
+            txt_img        = txt_img.rotate(degrees(angle+pi))
+            txt_mask       = txt_mask.rotate(degrees(angle+pi))
+        else: 
+            # txt_img        = txt_img.transpose(IMG.TRANSVERSE)
+            # txt_img        = txt_img.transpose(IMG.TRANSVERSE)
+            txt_img        = txt_img.rotate(degrees(angle))
+            txt_mask       = txt_mask.rotate(degrees(angle))
+        
+        
+        min_x          = int(self._start_point.get_x() if self.get_dx() > 0 else self._end_point.get_x())
+        min_y          = int(self._start_point.get_y() if self.get_dy() > 0 else self._end_point.get_y())
+        arw_radius     = int(self.get_magnitude()//2)
+        deg_angle      = degrees(angle)
+        angle_comp     = radians((deg_angle+180) % (360))
+        trans_x        = int((1-abs(cos(angle_comp)))*arw_radius)
+        trans_y        = int((1-abs(sin(angle_comp)))*arw_radius)
+        
+        min_x         -= trans_x
+        min_y         -= trans_y
+        
+        if img_size > self.get_magnitude():
+            trans_x   = int(img_size//2)-arw_radius
+            trans_y   = int(img_size//2)-arw_radius
+            min_x    -= trans_x
+            min_y    -= trans_y
 
-        # Determine where the arrow should be pasted onto the image.
-        # we don't just use the beginning and ending points because the 
-        # arrow's lable may be poking out past those points.
-        dx, dy = self.get_dx(), self.get_dy()
-        new_height = 0
-        new_width  = 0
-        if dx == 0:
-            new_width = (arw_height + 2*LENGTH) if dy < 0 else (arw_height + 2*LENGTH)*-1
-        elif dy == 0:
-            new_height = (arw_height + 2*LENGTH) if dx > 0 else (arw_height + 2*LENGTH)*-1
-        elif top_crop > text_start:
-            new_height = int(cos(angle) * (top_crop-text_start)) + 2*WIDTH
-        # Subtract new_width and new_height
-        start = (start[0] - (new_width if new_width > 0 else 0), 
-                 start[1] - (new_height if new_height > 0 else 0))
-        end   = (end[0] - (new_width if new_width > 0 else 0), 
-                 end[1] - (new_height if new_height > 0 else 0))
-        # Get the actual width and height of the arw_img.
-        dx, dy         = arw_img.width, arw_img.height
-        # Put the starting and ending x and y coordinates in order
-        min_x        = start[0] if start[0] < end[0] else end[0]
-        min_y        = start[1] if start[1] < end[1] else end[1]
-        max_x        = min_x + dx
-        max_y        = min_y + dy
-        # This is the bounding box on the provided image where the 
-        # arrow image will be pasted.
-        box          = (min_x, min_y, max_x, max_y) 
+
+        max_x          = img_size + min_x
+        max_y          = img_size + min_y
+        box            = (min_x, min_y, max_x, max_y)
         
+        color_img  = colorize(arw_img, bg_color, color)
+
         image_to_draw_on.paste(color_img, mask=arw_img,  box=box)
         image_to_draw_on.paste(txt_img,   mask=txt_mask, box=box)
-        # arw_img.show()
         
 def main():
     # draw grid
     img = IMG.new('RGB', (1000, 1000), WHITE)
     draw = Draw(img)
-    #   Horizontal lines
-    draw.line((0, 100, 1000, 100), BLUE, WIDTH)
-    draw.line((0, 250, 1000, 250), BLUE, WIDTH)
-    draw.line((0, 350, 1000, 350), BLUE, WIDTH)
-    draw.line((0, 500, 1000, 500), BLUE, WIDTH)
-    draw.line((0, 600, 1000, 600), BLUE, WIDTH)
-    draw.line((0, 750, 1000, 750), BLUE, WIDTH)
-    draw.line((0, 850, 1000, 850), BLUE, WIDTH)
-    #   Veritcle lines
-    draw.line((100, 0, 100, 1000), BLUE, WIDTH)
-    draw.line((250, 0, 250, 1000), BLUE, WIDTH)
-    draw.line((350, 0, 350, 1000), BLUE, WIDTH)
-    draw.line((500, 0, 500, 1000), BLUE, WIDTH)
-    draw.line((600, 0, 600, 1000), BLUE, WIDTH)
-    draw.line((750, 0, 750, 1000), BLUE, WIDTH)
-    draw.line((850, 0, 850, 1000), BLUE, WIDTH)
+    # #   Horizontal lines
+    # draw.line((0, 100, 1000, 100), BLUE, WIDTH)
+    # draw.line((0, 250, 1000, 250), BLUE, WIDTH)
+    # draw.line((0, 350, 1000, 350), BLUE, WIDTH)
+    # draw.line((0, 500, 1000, 500), BLUE, WIDTH)
+    # draw.line((0, 600, 1000, 600), BLUE, WIDTH)
+    # draw.line((0, 750, 1000, 750), BLUE, WIDTH)
+    # draw.line((0, 850, 1000, 850), BLUE, WIDTH)
+    # #   Veritcle lines
+    # draw.line((100, 0, 100, 1000), BLUE, WIDTH)
+    # draw.line((250, 0, 250, 1000), BLUE, WIDTH)
+    # draw.line((350, 0, 350, 1000), BLUE, WIDTH)
+    # draw.line((500, 0, 500, 1000), BLUE, WIDTH)
+    # draw.line((600, 0, 600, 1000), BLUE, WIDTH)
+    # draw.line((750, 0, 750, 1000), BLUE, WIDTH)
+    # draw.line((850, 0, 850, 1000), BLUE, WIDTH)
     
-    
+
     start = Point(100, 100)
     end   = Point(250, 250)
+    draw.rectangle((start.to_list(), end.to_list()), BLUE)
     arrow_1 = DataFlowArrow(lable="Test1,\ntest,\ntest\ntest\ntest", start_point=start, end_point=end)
     start = Point(350, 500)
     end   = Point(500, 350)
+    draw.rectangle((start.to_list(), end.to_list()), BLUE)
     arrow_2 = DataFlowArrow(lable="Test2", start_point=start, end_point=end)
     start = Point(750, 600)
     end   = Point(600, 750)
+    draw.rectangle((start.to_list(), end.to_list()), BLUE)
     arrow_3 = DataFlowArrow(lable="Test3", start_point=start, end_point=end)
     start = Point(850, 850)
     end   = Point(1000, 1000)
+    draw.rectangle((start.to_list(), end.to_list()), BLUE)
     arrow_4 = DataFlowArrow(lable="Test4", start_point=start, end_point=end)
     start = Point(175, 600)
     end   = Point(175, 750)
+    draw.rectangle((start.to_list(), end.to_list()), BLUE)
     arrow_5 = DataFlowArrow(lable="Test5", start_point=start, end_point=end)
     start = Point(100, 250)
     end   = Point(250, 250)
+    draw.rectangle((start.to_list(), end.to_list()), BLUE)
     arrow_6 = DataFlowArrow(lable="Test6", start_point=start, end_point=end)
     arrow_1.draw(img, BLACK)
     arrow_2.draw(img, BLACK)
