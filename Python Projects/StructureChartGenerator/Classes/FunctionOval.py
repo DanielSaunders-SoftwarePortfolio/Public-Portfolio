@@ -2,10 +2,19 @@ from PIL import Image as IMG
 from PIL.Image import Image
 from PIL.ImageDraw import Draw
 import PIL.ImageFont as ImFont
-from Point import Point
-from Arrows import DataFlowArrow
-import Arrows as Arr
-from Arrows import BLACK, WHITE
+if __name__ == "__main__":
+    from Point import Point
+    import Arrows as Arr
+    from Arrows import BLACK, WHITE
+elif __name__.split(".")[0] == "Classes":
+    from Classes.Point import Point
+    import Classes.Arrows as Arr
+    from Classes.Arrows import BLACK, WHITE
+else:
+    from Point import Point
+    import Arrows as Arr
+    from Arrows import BLACK, WHITE
+
 
 TEXT_SIZE = 36
 FONT      = ImFont.truetype(r'C:\Users\System-Pc\Desktop\arial.ttf', TEXT_SIZE)

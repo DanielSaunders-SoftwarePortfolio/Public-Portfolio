@@ -1,12 +1,33 @@
 from PIL import Image as IMG
 from PIL.Image import Image
-from FunctionOval import FunctionOval
-import Arrows as ARR
-from Arrows import DataFlowArrow
-from Arrows import BLACK, WHITE
 from PIL.ImageDraw import Draw
-from Arrows import Point, sqrt
 from math import sin, cos, tan, pi
+
+if __name__ == "__main__":
+    from FunctionOval import FunctionOval
+    import Arrows as ARR
+    from Arrows import DataFlowArrow
+    from Arrows import BLACK, WHITE
+    from Arrows import Point, sqrt
+    from convert_py_to_json import convert_py_to_json as py2json
+    from FunctionOval import FunctionOval
+elif __name__.split(".")[0] == "Classes":
+    from Classes.FunctionOval import FunctionOval
+    import Classes.Arrows as ARR
+    from Classes.Arrows import DataFlowArrow
+    from Classes.Arrows import BLACK, WHITE
+    from Classes.Arrows import Point, sqrt
+    from Classes.convert_py_to_json import convert_py_to_json as py2json
+    from Classes.FunctionOval import FunctionOval
+else:
+    from FunctionOval import FunctionOval
+    import Arrows as ARR
+    from Arrows import DataFlowArrow
+    from Arrows import BLACK, WHITE
+    from Arrows import Point, sqrt
+    from convert_py_to_json import convert_py_to_json as py2json
+    from FunctionOval import FunctionOval
+
 
 DFA          = DataFlowArrow
 WIDTH_MULT   = 5
@@ -279,10 +300,4 @@ def main():
     img.show()
 
 if __name__ == "__main__":
-    from convert_py_to_json import convert_py_to_json as py2json
-    from FunctionOval import FunctionOval
     main()
-else:
-    from Classes.convert_py_to_json import convert_py_to_json as py2json
-    from Classes.FunctionOval import FunctionOval
-

@@ -6,7 +6,13 @@ from PIL.ImageColor import getrgb
 from PIL.ImageDraw import Draw
 from PIL.ImageOps import colorize
 import PIL.ImageFont as ImFont
-from Point import Point
+
+if __name__ == "__main__":
+    from Point import Point
+elif __name__.split(".")[0] == "Classes":
+    from Classes.Point import Point
+else:
+    from Point import Point
 
 BLACK  = getrgb('black')
 WHITE  = getrgb('white')
