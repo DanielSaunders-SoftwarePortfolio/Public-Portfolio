@@ -49,11 +49,10 @@ For help learning to create a user defined code snippet, see https://code.visual
 
 # Future Work
 
-{Make a list of things that you need to fix, improve, and add in the future.}
-
-- DataFlowArrows are not shortened corectly between FunctionOvals
-- Tultiline text in a DataFlowArrow is not drawn in the exact same position when text_only is true as it is when text_only is false
-- When a DataFlowArrow's angle is between 90 and 270 degrees, the text should be written upsidedown, but on the same side of the arrow.
-- Arrows that are vertical are not offset correctly during rotation.
+The following issues still require some work
+- FunctionOvals are spread out too much. Rows with fewer functions should be centered more tightly.
+- I would like to add intelligent placment of the ovals. Right now the ovals just fill in from left to right without regard for the functions that call them.
+- I would like to add functionality to convert_py_to_json that lets it parse a fully written python file and create a structure chart.
+- I would like to add data flow objects as well as a function that can parse a python file into a data flow diagram.
 
 
