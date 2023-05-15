@@ -1,5 +1,6 @@
 # Overview
 This module convert a python file with stub functions into a structure chart image. The python stub functions should follow the following template.
+  ```
   def function_name(parameter1, parameter2, etc):
     '''function_description'''
     # Dependencies
@@ -7,6 +8,7 @@ This module convert a python file with stub functions into a structure chart ima
     # Return value
     return_value = return_type
     return return_value
+    ```
 [Software Demo Video](https://www.youtube.com/watch?v=gTJmalZnXrY))
 
 # Development Environment
