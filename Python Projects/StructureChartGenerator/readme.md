@@ -9,7 +9,7 @@ This module convert a python file with stub functions into a structure chart ima
     return_value = return_type
     return return_value
 ```
-[Software Demo Video](https://www.youtube.com/watch?v=gTJmalZnXrY))
+[Software Demo Video](https://www.youtube.com/watch?v=gTJmalZnXrY)
 
 # Development Environment
 This module requires the user to have an IDE with Python installed as well as the Python Pillow library. 
