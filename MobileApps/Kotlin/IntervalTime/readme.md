@@ -10,7 +10,9 @@ This app was built in Android Studio using kotlin and typescript. It should run 
 A large majority of the file structure for this app was built automatically by Android Studio's blank project template.
 The following two Geeks for Geeks tutorials also contributed to the basic timer functions.
 [Geeks for Geeks - Stopwatch tutorial](https://www.geeksforgeeks.org/countdowntimer-in-android-using-kotlin/)
+
 [Geeks for Geeks - Timer tutorial](https://www.geeksforgeeks.org/how-to-create-a-stopwatch-app-using-android-studio/)
+
 I also couldn't have gotten any user input without the help of this site.
 [TextChangeListener Code Example](https://kotlincodes.com/kotlin/edittext-text-changelistener-kotlin/)
 
