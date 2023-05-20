@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".MainActivity"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#0F9D58"
+    >
+
+    <TextView
+        android:id="@+id/interval_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:textAppearance="@android:style/TextAppearance.Medium"
+        android:text="@string/interval_name"
+        android:textAlignment="center"
+        android:textSize="56sp" />
+
+    <TextView
+        android:id="@+id/time_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:textAppearance="@android:style/TextAppearance.Large"
+        android:textAlignment="center"
+        android:textSize="56sp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:background="#0F9D58"
+        android:padding="16dp"
+        >
+        <Button
+            android:id="@+id/start_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="20dp"
+            android:onClick="onClickStart"
+            android:text="@string/start"
+            tools:ignore="ButtonStyle" />
+        <Button
+            android:id="@+id/stop_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="8dp"
+            android:onClick="onClickStop"
+            android:text="@string/stop"
+            tools:ignore="ButtonStyle" />
+        <Button
+            android:id="@+id/reset_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="8dp"
+            android:onClick="onClickReset"
+            android:text="@string/reset"
+            tools:ignore="ButtonStyle" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#0F9D58"
+        android:gravity="center"
+        android:padding="16dp">
+        <!-- tools:context="org.geeksforgeeks.stopwatch.StopwatchActivity">-->
+
+
+        <TextView
+            android:id="@+id/interval_header"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/interval_header"
+            android:textColor="#212121" />
+
+        <TextView
+            android:id="@+id/break_header"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/break_header"
+            android:textColor="#212121" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#0F9D58"
+        android:gravity="center"
+        android:padding="16dp">
+        <!--tools:context="org.geeksforgeeks.stopwatch.StopwatchActivity">-->
+
+        <EditText
+            android:id="@+id/edit_interval"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:autofillHints="15, 30, 45, 60, 75, 90, 105, 120"
+            android:ems="10"
+            android:inputType="number"
+            android:minHeight="48dp"
+            android:text="@string/default_interval"
+            android:textAlignment="center"
+            tools:ignore="LabelFor,VisualLintTextFieldSize" />
+
+        <EditText
+            android:id="@+id/edit_break"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:autofillHints="15, 30, 45, 60, 75, 90, 105, 120"
+            android:ems="10"
+            android:inputType="number"
+            android:minHeight="48dp"
+            android:text="@string/default_break"
+            android:textAlignment="center"
+            tools:ignore="LabelFor,VisualLintTextFieldSize" />
+    </LinearLayout>
+
+</LinearLayout>
