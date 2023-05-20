@@ -19,7 +19,6 @@ I also couldn't have gotten any user input without the help of this site.
 [TextChangeListener Code Example](https://kotlincodes.com/kotlin/edittext-text-changelistener-kotlin/)
 
 # Future Work
-{Make a list of things that you need to fix, improve, and add in the future.}
 * Make Timer run in while the app is in the background
 * Add sound notification when timer ends
 * Prevent stop button from adding "[Paused]" more than once to the timer label.
