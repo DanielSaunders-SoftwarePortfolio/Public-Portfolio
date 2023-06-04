@@ -6,7 +6,8 @@ This project is written using Java language, with the javaFX library. The projec
 
 This is my first forray into creating desktop applications. I have often wanted to create applications that run on desktop without neededing a coding language or IDE installed, but my previous coding work has mostly been in Python and Javascript which are not capable of creating independent applications. I started with the chart design concept because I am a software engineering student and I want to be able to quickly and easilly create design visuals without relying on pristine handwriting and ideal lighting and camera work to ensure that my teacher or team can read the visual.
 
-![image](https://github.com/DanielSaunders-SoftwarePortfolio/Public-Portfolio/assets/131573288/83c3f9a1-8910-4c93-993b-db8e13d8f3f0)
+Since the code does not yet interface with the user, rather than my normal demosntration video, I will include a screenshot of the window the code would output.
+![image](https://github.com/DanielSaunders-SoftwarePortfolio/Public-Portfolio/assets/131573288/03baa456-a7a7-4b6d-9189-ab2b0be0868d)
 
 # Development Environment
 
