@@ -4,4 +4,4 @@ set JAVA_EXEC="%DIR:"=%\java"
 
 
 
-pushd %DIR% & %JAVA_EXEC% %CDS_JVM_OPTS%  -p "%~dp0/../app" -m ChartApp/org.openjfx.ChartApp  %* & popd
+pushd %DIR% & %JAVA_EXEC% %CDS_JVM_OPTS%  -p "%~dp0/../app" -m ChartApp/org.chartapp.ChartApp  %* & popd

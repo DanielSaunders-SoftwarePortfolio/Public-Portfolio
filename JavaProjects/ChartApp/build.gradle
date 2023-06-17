@@ -23,4 +23,9 @@ jlink {
     launcher {
         name = 'Chart Builder'
     }
+    jpackage {
+        // options += '--info'
+        installerOptions += '--verbose'
+    }
 }
+

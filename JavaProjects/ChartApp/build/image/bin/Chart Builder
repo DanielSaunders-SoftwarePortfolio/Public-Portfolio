@@ -6,4 +6,4 @@ DIR="${0%/*}"
 
 
 
-"$DIR/java" $CDS_JVM_OPTS  -p "$DIR/../app" -m ChartApp/org.openjfx.ChartApp  "$@"
+"$DIR/java" $CDS_JVM_OPTS  -p "$DIR/../app" -m ChartApp/org.chartapp.ChartApp  "$@"
