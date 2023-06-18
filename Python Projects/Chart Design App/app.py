@@ -25,7 +25,7 @@ class ShapeMenu(tk.Frame):
 
 class App:
     '''
-    This class will define the functionality of the app as a while, including 
+    This class will define the functionality of the App as a whAle, including 
     user input, saving and loading files, and creating new charts, shapes, and 
     projects.
     '''
@@ -198,15 +198,14 @@ class App:
                 # to leave that shape selected.but if not, we want to
                 # clear our selection.
                 if not self.selected_shape.contains_point(x, y):
-                    old_selection:Shape = self.selected_shape
                     self.selected_shape = None
                     self.edit_panel.clear()
-                    old_selection.draw()
                     
         
         if self.selected_shape:
             self.show_shape_properties()
-            self.selected_shape.draw()
+        
+        self.draw_shapes()
 
     def show_shape_properties(self):
         '''
