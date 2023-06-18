@@ -4,7 +4,7 @@ This app will help the user design a flow chart. The user can insert each differ
 
 I built this app to help create professional looking design documents for my future software projects.
 
-[Software Demo Video]((https://youtu.be/kEA8Lkzlq54))
+[Software Demo Video](https://youtu.be/kEA8Lkzlq54)
 
 # Development Environment
 
