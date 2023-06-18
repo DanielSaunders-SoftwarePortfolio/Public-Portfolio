@@ -1,202 +1,312 @@
 import tkinter as tk
 from shapes import *
 
-class PropertyPane:
-    def __init__(self, master, draw_func, width=200, height=200, row=1, col=0) -> None:
-        self.frame     = tk.Frame(master, width=width, height=height)
-        self.master    = master
-        self.row       = row
-        self.col       = col
-        self.draw_func = draw_func
-        self.showing   = False
-        
-        self.frame.grid(row=row, column=col)
-        
-    def display_properties(self, shape:Shape):
-        self.clear()
-        self.frame.grid(row=1, column=0)
-        self.showing = True
-        
-        self.properties_label = tk.Label(self.frame, text="Shape Properties:")
-        self.properties_label.grid(row=0, column=0, columnspan=2)
-        
-        self.shape_type_label = tk.Label(self.frame, text="Title:")
-        self.shape_type_label.grid(row=1, column=0)
-        self.shape_title_entry = tk.Entry(self.frame)
-        self.shape_title_entry.insert(tk.END, shape.label)
-        self.shape_title_entry.grid(row=1, column=1)
-        
-        self.x_label = tk.Label(self.frame, text="X")
-        self.x_label.grid(row=2, column=0)
-        self.x_entry = tk.Entry(self.frame)
-        self.x_entry.insert(tk.END, str(shape.x))
-        self.x_entry.grid(row=3, column=0)
-
-        self.y_label = tk.Label(self.frame, text="Y")
-        self.y_label.grid(row=2, column=1)
-        self.y_entry = tk.Entry(self.frame)
-        self.y_entry.insert(tk.END, str(shape.y))
-        self.y_entry.grid(row=3, column=1)
-        
-        self.span_lable1 = tk.Label(self.frame, text=" ")
-        self.span_lable1.grid(row=4, column=0, columnspan=2)
-
-        self.width_label = tk.Label(self.frame, text="Width:")
-        self.width_label.grid(row=5, column=0)
-        self.width_entry = tk.Entry(self.frame)
-        self.width_entry.insert(tk.END, str(shape.width))
-        self.width_entry.grid(row=5, column=1)
-        
-        self.height_label = tk.Label(self.frame, text="Height:")
-        self.height_label.grid(row=6, column=0)
-        self.height_entry = tk.Entry(self.frame)
-        self.height_entry.insert(tk.END, str(shape.height))
-        self.height_entry.grid(row=6, column=1)
-        
-        self.span_lable2 = tk.Label(self.frame, text=" ")
-        self.span_lable2.grid(row=7, column=0, columnspan=2)
-        
-        # Bind a button click event to update the shape properties
-        self.update_button = tk.Button (
-                                        self.frame, text="Update", 
-                                        command=lambda: 
-                                            self.update_shape_properties(
-                                                shape, 
-                                                self.shape_title_entry.get(),
-                                                self.x_entry.get(), 
-                                                self.y_entry.get(), 
-                                                self.width_entry.get(), 
-                                                self.height_entry.get()
-                                            )
-                                       )
-        self.update_button.grid(row=8, column=0, columnspan=2)
-        
-    def clear(self):
-        self.showing=False
-        self.frame.destroy()
-        self.frame = tk.Frame(self.master, width=200, height=200)
+class Chart(tk.Canvas):
+    '''
+    A Chart is a tk.Canvas that you can draw shapes on
+    ''' 
+    def __init__(self, root, bg="white", width=700, height=400) -> None:
+        super().__init__(root, bg=bg, width=width, height=height)
+        # I plan to add children to the chart class (such as flow chart or 
+        # structure chart). For now, this feature is just a stub structure 
+        # pending construction.
     
-    def update_coordinates(self, x, y):
-        if self.showing:
-            self.y_entry.delete(0,tk.END)
-            self.x_entry.delete(0,tk.END)
-            
-            self.y_entry.insert(0,str(y))
-            self.x_entry.insert(0,str(x))
-            
-    
-    def update_shape_properties(self, shape:Shape, label, x, y, width, height):
-        # Update the selected shape properties
-        shape.label = label
-        shape.x = int(x)
-        shape.y = int(y)
-        shape.width = int(width)
-        shape.height = int(height)
-        self.draw_func()
-        self.display_properties(shape)
-        
+class ShapeMenu(tk.Frame):
+    '''
+    ShapeMenu definies a menue filled with buttons for creating shapes 
+    within a chart.
+    '''
+    def __init__(self, root, width=300, height=400) -> None:
+        super().__init__(root, width=width, height=height)
+        # This class does not have any special proerties yet.
+        # Once the app is able to display multiple chart types
+        # this class will be used to differentiate the shape
+        # options available for each type of chart. 
 
 class App:
+    '''
+    This class will define the functionality of the app as a while, including 
+    user input, saving and loading files, and creating new charts, shapes, and 
+    projects.
+    '''
     def __init__(self):
-        self.shapes = []
-        self.selected_shape = None
-
+        
+        #  Create the window
         self.root = tk.Tk()
         self.root.title("Chart App")
 
-        self.menu_panel = tk.Frame(self.root, width=200, height=200)
+        # Eventually shapes will be moved to the Chart class, but for now, I 
+        # put them here to simplify the scope of this project. My next step 
+        # will be to enable the app to save multiple charts and tab between 
+        # them. Once I've done that, the shapes will need to be saved, edited, 
+        # drawn, and loaded from the chart app.
+        self.shapes = []
+        self.selected_shape = None
+
+        # This is the menue from which you can create new shapes on the active 
+        # Chart
+        self.menu_panel = ShapeMenu(self.root, width=200, height=200)
         self.menu_panel.grid(row=0, column=0)
 
-        self.view_panel = tk.Canvas(self.root, bg="white", width=700, height=400)
+        # This is the active chart. Eventually, new instances of the app will 
+        # not have a chart yet, But since the chart selection and 
+        # differentiation features aren't ready yet, this is the simplest way 
+        # to begin and test the app features.
+        self.charts = []
+        self.view_panel = Chart(self.root, bg="white", width=700, height=400)
         self.view_panel.grid(row=0, column=1, rowspan=2, sticky="nsew")
+        self.active_chart = self.view_panel
+        self.charts.append(self.view_panel)
+        # This is a panel that displays the properties of the active shape 
+        # when a shape is selected.
+        self.edit_panel = PropertyPanel(
+                                        self.root, self.draw_shapes, 
+                                        width=200, height=200, row=1, 
+                                        col=0
+                                       )
+
+        # These buttons will eventually be in the ShapeMenu class but I need to 
+        # figure out how to create the shapes inside a Chart object using a 
+        # button inside a different class.
+        terminator_button = tk.Button(
+                                      self.menu_panel, text="Terminator", 
+                                      command=self.add_terminator
+                                     )
+        terminator_button.pack()
+
+        process_button = tk.Button(
+                                    self.menu_panel, text="Process", 
+                                   command=self.add_process
+                                  )
+        process_button.pack()
+
+        decision_button = tk.Button(
+                                   self.menu_panel, text="Decision", 
+                                   command=self.add_decision
+                                  )
+        decision_button.pack()
         
-        self.edit_panel = PropertyPane(self.root, self.draw_shapes, width=200, height=200, row=1, col=0)
-
-        Rectangle_button = tk.Button(self.menu_panel, text="Rectangle", command=self.create_Rectangle)
-        Rectangle_button.pack()
-
-        circle_button = tk.Button(self.menu_panel, text="Circle", command=self.create_circle)
-        circle_button.pack()
-
-        rounded_rect_button = tk.Button(self.menu_panel, text="Rounded Rectangle", command=self.create_rounded_rect)
-        rounded_rect_button.pack()
-
-        diamond_button = tk.Button(self.menu_panel, text="Diamond", command=self.create_diamond)
-        diamond_button.pack()
+        flow_node_button = tk.Button(
+                                    self.menu_panel, text="Flow Node", 
+                                  command=self.add_flow_node
+                                 )
+        flow_node_button.pack()
+        
+        display_button = tk.Button(
+                                    self.menu_panel, text="Display", 
+                                  command=self.add_display
+                                 )
+        display_button.pack()
+        
+        self._build_menus()
 
         self.view_panel.bind("<Button-1>", self.select_shape)
         self.view_panel.bind("<B1-Motion>", self.move_shape)
 
-    def create_Rectangle(self):
-        
-        rectangle = Rectangle(50, 50, 100, 150)
+    def add_process(self):
+        '''
+        Adds a process shape to the chart
+        '''
+        # Eventully I hope to move thi function to either the ShapeMenu class
+        # But I need to restructure the functions so that they add to a 
+        # provided Chart object.
+        rectangle = Process(50, 50, 50, 75)
         index = len(self.shapes)
         rectangle.change_label("Process "+str(index))
         self.shapes.append(rectangle)
         self.draw_shapes()
 
-    def create_circle(self):
-        circle = Circle(50, 50, 100, 100)
+    def add_flow_node(self):
+        '''
+        Adds a FlowNode shape to the chart
+        '''
+        # Eventully I hope to move thi function to either the ShapeMenu class
+        # But I need to restructure the functions so that they add to a 
+        # provided Chart object.
+        flow_node = FlowNode(50, 50, 25, 25)
         index = len(self.shapes)
-        circle.change_label("Circle "+str(index))
-        self.shapes.append(circle)
+        flow_node.change_label(str(index))
+        self.shapes.append(flow_node)
         self.draw_shapes()
 
-    def create_rounded_rect(self):
-        rounded_rect = RoundedRectangle(50, 50, 75, 150)
-        index = len(self.shapes)
-        rounded_rect.change_label("Terminator "+str(index))
-        self.shapes.append(rounded_rect)
+    def add_terminator(self):
+        '''
+        Adds a terminator Shape to the chart
+        '''
+        # Eventully I hope to move thi function to either the ShapeMenu class
+        # But I need to restructure the functions so that they add to a 
+        # provided Chart object.
+        terminator = Terminator(50, 50, 25, 50)
+        terminator.change_label("Start")
+        self.shapes.append(terminator)
         self.draw_shapes()
 
-    def create_diamond(self):
-        diamond = Diamond(50, 50, 100, 150)
+    def add_decision(self):
+        '''
+        Adds a Decision Shape to the Chart.
+        '''
+        # Eventully I hope to move thi function to either the ShapeMenu class
+        # But I need to restructure the functions so that they add to a 
+        # provided Chart object.
+        decision = Decision(50, 50, 50, 75)
         index = len(self.shapes)
-        diamond.change_label("Decision "+str(index))
-        self.shapes.append(diamond)
+        decision.change_label("Decision "+str(index))
+        self.shapes.append(decision)
         self.draw_shapes()
 
+    def add_display(self):
+        '''
+        Adds a Display Shape to the Chart.
+        '''
+        # Eventully I hope to move thi function to either the ShapeMenu class
+        # But I need to restructure the functions so that they add to a 
+        # provided Chart object.
+        display = Display(50, 50, 50, 75)
+        index = len(self.shapes)
+        display.change_label("Display "+str(index))
+        self.shapes.append(display)
+        self.draw_shapes()
+    
     def draw_shapes(self):
+        '''
+        Draws all Shapes in the Chart
+        '''
+        # Eventually this will be moved to the Chart class.
         self.view_panel.delete("all")
         for shape in self.shapes:
             shape.draw(self.view_panel, self.selected_shape==shape)
 
     def select_shape(self, event):
+        '''
+        using a cursor event, finds the shape that the user most likely 
+        clicked and saves that shape to self.selected_shape.
+        '''
         x, y = event.x, event.y
-        selected_shape = None
+        selected = None
         for shape in self.shapes:
             if shape.contains_point(x, y) and shape != self.selected_shape:
-                selected_shape = shape
+                selected = shape
                 break
             
-        if selected_shape:
-            self.selected_shape = selected_shape
-            selected_shape.start_mod(x, y)
+        if selected:
+            self.selected_shape = selected
+            selected.start_mod(x, y)
         else:
-            if self.selected_shape:
+            if self.selected_shape: 
+                # If the chart already has a selected shape, and
+                # the mouse click landed inside that shape, we want 
+                # to leave that shape selected.but if not, we want to
+                # clear our selection.
                 if not self.selected_shape.contains_point(x, y):
+                    old_selection:Shape = self.selected_shape
                     self.selected_shape = None
                     self.edit_panel.clear()
+                    old_selection.draw()
+                    
         
         if self.selected_shape:
             self.show_shape_properties()
-        
-        self.draw_shapes()
+            self.selected_shape.draw()
 
     def show_shape_properties(self):
+        '''
+        Update self.edit_panel based on currentshape selection
+        '''
         if self.selected_shape:
             self.edit_panel.display_properties(self.selected_shape)
+        else:
+            self.edit_panel.clear()
 
     def move_shape(self, event):
-        
+        '''
+        Moves a shape based on cursor motion
+        '''
         if self.selected_shape!=None:
-            # print("moving shape")
             shape = self.selected_shape
             x, y, = event.x, event.y
             shape.move(x, y)
             self.draw_shapes()
             self.edit_panel.update_coordinates(shape.x, shape.y)
     
+    def _build_menus(self):
+        '''
+        Builds the menues at the top menu bar of the app.
+        '''
+        # def set_active_chart(chart_index:int):
+        #     '''
+        #     Activate a chart from self.charts using the chart index.
+        #     '''
+        #     # Pending Feature: Chart differentiation
+        #     self.active_chart = self.charts[chart_index]
+            
+        # def add_flow_chart():
+        #     pass # Pending Feature
+        
+        # def add_structure_chart():
+        #     pass # Pending Feature
+        
+        # def add_dfd():
+        #     pass # Pending Feature
+        
+        def add_chart():
+            # Pending Feature
+            print("Create New Chart in Project.")
+            
+        
+        def new_file():
+            '''
+            Reset app to initial conditions c
+            '''
+            print("Create New File")
+            pass # Pending Feature
+        
+        def open_file():
+            print("Open Existing File")
+            pass # Pending Feature
+        
+        # def import_chart():
+        #     pass # Pending Feature
+        
+        # def export_chart():
+        #     pass # Pending Feature
+        
+        # def export_all():
+        #     pass # Pending Feature
+        
+        self.menu_bar = tk.Menu(self.root)
+        self.file_menu:tk.Menu = tk.Menu(self.menu_bar, tearoff=0)
+        # New chart menu
+        self.new_chart_menu:tk.Menu = tk.Menu(self.file_menu, tearoff=0)
+        
+            # Pending Feature: Chart Differentiation
+                # self.new_chart_menu.add_command(label="Flow Chart", command=add_flow_chart)
+                # self.new_chart_menu.add_command(label="Structure Chart", command=add_structure_chart)
+                # self.new_chart_menu.add_command(label="DFD", command=add_dfd)
+        self.new_chart_menu.add_command(label="Chart", command=add_chart)
+        self.file_menu.add_cascade(menu=self.new_chart_menu, label="New Chart")
+        # File options
+        self.file_menu.add_command(label="New File", command=new_file)
+        self.file_menu.add_separator()
+        self.file_menu.add_command(label="Open File", command=open_file)
+            # Pending Features: Save File
+                # self.file_menu.add_command(label="Import Chart(s)", command=import_chart)
+                # self.file_menu.add_separator()
+                # self.file_menu.add_command(label="Export Chart", command=export_chart)
+                # self.file_menu.add_command(label="Export All", command=export_all)
+                # Add file_menu to menu_bar
+        self.menu_bar.add_cascade(menu=self.file_menu, label="File")
+        
+        
+        # Chart Edit Menu
+        self.edit_chart = tk.Menu(self.menu_bar, tearoff=0)
+        self.edit_chart.add_command(label="AddShape", command=self.add_terminator)
+        self.menu_bar.add_cascade(menu=self.edit_chart, label="Edit Chart")
+        
+        self.root.config(menu=self.menu_bar)
+
     def run(self):
+        '''
+        Sun main loop.
+        '''
         self.root.mainloop()
             
