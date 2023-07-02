@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en-US" dir="ltr">
+    <head>
+        {% if redirect %}
+        <meta http-equiv="Refresh" content="0; url='{% url 'Shop' %}'" />
+        {% endif %}
+        <style>
+            table {
+                border-collapse: separate;
+                border-spacing: 0px 10px;
+            }
+            tr {
+                border-bottom: 1px solid black;
+                margin: 1.5em;
+            }
+            td {
+                border-right: 1px solid black;
+                border-left: 1px solid black;
+                {% comment %} border: 1px solid black; {% endcomment %}
+                padding-left: 2em;
+                padding-right: 2em;
+            }
+            tr#selected {
+                background-color: #8C9FA0;
+            }
+
+        </style>
+        <script>
+            function selectItem(row) {
+                var oldSelection = document.getElementById("selected");
+                if (oldSelection && oldSelection != row) {
+                    oldSelection.removeAttribute("id");
+                } 
+                row.setAttribute("id", "selected");
+                var itemName = row.cells[0].innerHTML;
+                var itemPrice = row.cells[2].innerHTML;
+                nameInput = document.getElementById("itemName")
+                priceInput = document.getElementById("itemPrice")
+                nameInput.setAttribute("value", itemName)
+                priceInput.setAttribute("value", itemPrice)
+            }
+        </script>
+    </head>
+    <body>
+        <header>{{username}}: {{money}}</header>
+        <form action="{%url 'Purchase'%}" method="post" id="ShopForm">{% csrf_token %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Race</th>
+                        <th>Price</th>
+                        <th>Stats</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in shop %}
+                        <tr onclick="selectItem(this)">
+                            {% comment %} <td>{{ row }}</td> {% endcomment %}
+                            <td>{{ row.alien }}</td>
+                            <td>{{ row.race  }}</td>
+                            <td>{{ row.price }}</td>
+                            <td>{{ row.stats |safe}}</td>
+                        </tr>
+                    {% endfor %}
+
+                </tbody>    
+            </table>    
+            <input type="hidden", id="itemName", name="itemName" value="">
+            <input type="hidden", id="itemPrice", name="itemPrice" value="">
+            <input type="submit" value="Purchase">
+        </form>
+    </body>
+    <foot>
+    </foot>
+</html>
