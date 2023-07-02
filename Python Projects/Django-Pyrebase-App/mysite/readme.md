@@ -8,12 +8,12 @@ My cloud database Has two main tables inside it. The "Shop" Table which contains
   
   # Shop
   The shop only has one table in it now, But I plan to expand to other types as well. The "Aliens" tabledepicted below demonstrates how other tables will eventually work as well.
-  ![image](https://github.com/DanielSaunders-SoftwarePortfolio/Public-Portfolio/assets/131573288/2bb0600d-18c3-4d7e-8f4d-c095da374434)
+![image](https://github.com/DanielSaunders-SoftwarePortfolio/Public-Portfolio/assets/131573288/2bb0600d-18c3-4d7e-8f4d-c095da374434)
   The items name is the key of each table item and value contains certain useful information such as the stats and the price.
 
   # Users
   The users Table is not where user credentials are stored, but does contain the users ingame funds and curent inventory.
-  ![image](https://github.com/DanielSaunders-SoftwarePortfolio/Public-Portfolio/assets/131573288/f6e777c1-82bc-49ac-8336-2eb41f8e0172)
+![image](https://github.com/DanielSaunders-SoftwarePortfolio/Public-Portfolio/assets/131573288/f6e777c1-82bc-49ac-8336-2eb41f8e0172)
   Each Key in the inventory will correspond to an item in one of the shop tables. When displaying the inventory, I should be able to use the key from the inventory to pull the information from the shop table.
   The key for each entry in the "Users" list is the user ID. Each time a new user signs up, in adition to creating an authenticated user for the database, the signup form creates a user entry in the user table and populates it with standardized beginner values such as starting funds.
 
